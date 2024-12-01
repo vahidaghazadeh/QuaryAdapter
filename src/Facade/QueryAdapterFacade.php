@@ -1,0 +1,86 @@
+<?php
+
+namespace Opsource\QueryAdapter\Facade;
+
+use Closure;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Facade;
+use Opsource\QueryAdapter\Filters\IndicatorCollection;
+use Opsource\QueryAdapter\Performers\MatchOptions;
+use Opsource\QueryAdapter\Performers\MultiMatchOptions;
+use Opsource\QueryAdapter\Performers\WildcardOptions;
+
+/**
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine adapter()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine setModel(Model $model = null)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine getPreventObserver()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine setPreventObserver(bool $prevent)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine getIndexName()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine getIndicator()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine settings()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine search()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine deleteByQuery()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine isCreated()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine create()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine addToIndex(array $body)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine addToUpdate(array $body)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine createDoc()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine updateDoc(bool $use_doc = true)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine bulk(array $body)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine get(int|string|null $id = null)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine documentDelete(int|string $id)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine catIndices(string $indexName, ?array $getFields = null)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine indicesDelete(string $index)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine indicesReindex(string $index)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine indicesNewAlias(array $body)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine indicesIndex(string $index, array $setting)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine indicesRefresh()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine indicesReloadSearchAnalyzers()
+ * @method \Opsource\QueryAdapter\Search\SearchQuery query()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine aggregate()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine suggest()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine enableLog()
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine setEngineData(string $method = null, ...$parameters)
+ * @method \Opsource\QueryAdapter\Performers\SearchEngine getEngineData(bool $as_collect = false)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder make(string $path = '', ?Closure $builder = null)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder isEmpty(): bool
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder like(array $field, mixed $value, string $operator = 'or')
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder moreLike(array $field, mixed $value, array $more)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder nested(string $nested, Closure $filter)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder where(string $field, mixed $operator, mixed $value = null)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder find($id)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereNot(string $field, mixed $value)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereTerm(string $field, mixed $value)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereIn(string $field, array|Arrayable $values)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder orWhereIn(string $field, array|Arrayable $values)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereNotIn(string $field, array|Arrayable $values)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereHas(string $nested, Closure $filter)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereDoesntHave(string $nested, Closure $filter)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereNull(string $field)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereNotNull(string $field)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereMatch(string $field, string $query, string|MatchOptions $operator = 'or')
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder orWhereMatch(string $field, string $query, string|MatchOptions $operator = 'or')
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder makeMatch(string $field, string $query, string|MatchOptions $operator = 'or')
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereMultiMatch(array $fields, string $query, string|MultiMatchOptions|null $type = null)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder orWhereMultiMatch(array $fields, string $query, string|MultiMatchOptions|null $type = null)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereWildcard(string $field, string $query, ?WildcardOptions $options = null)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder orWhereWildcard(string $field, string $query, ?WildcardOptions $options = null)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder makeWildcard(string $field, string $query, ?WildcardOptions $options = null)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder addMustBool(callable $fn)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder addNestedCriteria(string $nested, Closure $filter, IndicatorCollection $target)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder createComparisonCriteria(string|array $field, string $operator, mixed $value, array $more = null)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder basePath()
+ */
+
+class QueryAdapterFacade extends Facade
+{
+    /**
+     * @return string
+     */
+    protected static function getFacadeAccessor(): string
+    {
+        return 'QueryAdapterFacade';
+    }
+}

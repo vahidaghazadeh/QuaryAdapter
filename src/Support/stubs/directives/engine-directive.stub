@@ -1,0 +1,100 @@
+<?php
+
+namespace {NAMESPACE};
+
+use Illuminate\Database\Eloquent\Model;
+use Opsource\QueryAdapter\Performers\EngineDirectiveAdapter;
+use Opsource\QueryAdapter\Contracts\SearchableDirectiveInterface;
+use {MODEL_NAMESPACE};
+
+class {DIRECTIVE_NAME} implements SearchableDirectiveInterface
+{
+    /**
+     * @var string
+     * | This property is the document name in Elasticsearch.
+     * | If you have not selected the document name, the default is the name of the model table
+     * | For more information, you can refer to the link below on Elasticsearch
+     * | https://www.elastic.co/guide/en/elasticsearch/reference/8.13/index-modules-blocks.html
+     */
+    protected string $indexName = '{INDEX}';
+
+    /**
+     * @var string
+     * | It indicates the unique key of the document in Elasticsearch
+     * | It usually indicates the table id.
+     * | If your indicator is different, you can change it
+     * | For more information, you can refer to the link below on Elasticsearch
+     * | https://www.elastic.co/guide/en/elasticsearch/reference/8.13/explicit-mapping.html
+     */
+    protected string $indicator = '{INDICATOR}';
+
+    /**
+     * @var Model
+     * | The model indicates the existence of the document in Elasticsearch. For example, if your document is about products, your model entity name is probably Product.
+     * | When using this class, you can give an example of the found model of the product as a parameter to this class or create a new example of the model.
+     * | For more information, you can refer to the link below on
+     * | For more information about models, you can refer to the Laravel site
+     * | https://laravel.com/docs/11.x/eloquent
+     */
+    public Model $model;
+
+    /**
+     * @var bool
+     * | If you need the boot method (Illuminate\Database\Eloquent::bootTraits) not to be executed when the operation is executed on the model, you can set preventObserver to false
+     * | By setting preventObserver to false, the boot method of the model will not be called, and as a result, index, update, delete, etc. operations will not be executed.
+     * | So it is necessary to be careful in using the property
+     * | For more information, you can refer to the link below on Laravel
+     * |
+     */
+    protected bool $preventObserver = true;
+
+    protected EngineDirectiveAdapter $adapter;
+
+    public function __construct()
+    {
+        $this->model = app({MODEL_NAME}::class);
+        $this->adapter = app(EngineDirectiveAdapter::class, ['directive' => $this]);
+    }
+
+    /**
+     * | To use this class, you can call the constant of this method.
+     * | If you have found an example of your model, you can use this class as a parameter so that the executed queries are only applied to your found model. Otherwise, a new instance of your model will be created
+     */
+    public function setModel(Model $model = null): static
+    {
+        $this->model = $model ?? app({MODEL_NAME}::class);
+        return $this;
+    }
+
+    public function getIndexName(): string
+    {
+        return $this->indexName;
+    }
+
+    public function getIndicator(): string
+    {
+        return $this->indicator;
+    }
+
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
+
+    public function getPreventObserver(): bool
+    {
+        return $this->preventObserver;
+    }
+
+    public function setPreventObserver(bool $prevent): static
+    {
+        $this->preventObserver = $prevent;
+        return $this;
+    }
+
+    public function adapter(): EngineDirectiveAdapter
+    {
+        return app(EngineDirectiveAdapter::class, ['directive' => $this]);
+    }
+}
+
