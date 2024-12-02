@@ -1,5 +1,6 @@
 {
     "name": "opsource/queryadapter",
+    "version": "1.0.1",
     "type": "library",
     "description": "Revolutionize your Laravel query management with Laravel Query Adapter! Our adapter package includes multiple query executioners, including Elasticsearch and Eloquent, to help you efficiently run your Laravel queries. Say goodbye to query management headaches and hello to seamless query execution with Laravel Query Adapter. ies.",
     "license": "MIT",
