@@ -27,7 +27,7 @@ class ElasticClient
     private ?QueryLog $queryLog = null;
 
     /**
-     * @param  Client  $client
+     * @param Client $client
      */
     public function __construct(private Client $client)
     {
@@ -52,7 +52,7 @@ class ElasticClient
     }
 
     /**
-     * @param  Model  $model
+     * @param Model $model
      * @return void
      */
     public function setModel(Model $model): void
@@ -112,7 +112,7 @@ class ElasticClient
     }
 
     /**
-     * @param  array  $body
+     * @param array $body
      * @return bool
      * @throws ClientResponseException
      * @throws MissingParameterException
@@ -127,16 +127,16 @@ class ElasticClient
 
 
     /**
-     * @param  string  $index
-     * @param  array  $settings
+     * @param string $index
+     * @param array $settings
      * @return Elasticsearch|Promise
      * @throws ClientResponseException
      * @throws MissingParameterException
      * @throws ServerResponseException
-     | You can use this method to create an index
-     | The index parameter is the name of the index
-     | The settings parameter includes index settings, mappings, which itself contains many settings, including _source and properties.
-     | For more information, you can read the official page of Elasticsearch
+     * | You can use this method to create an index
+     * | The index parameter is the name of the index
+     * | The settings parameter includes index settings, mappings, which itself contains many settings, including _source and properties.
+     * | For more information, you can read the official page of Elasticsearch
      */
     public function indicesCreate(string $index, array $settings): Elasticsearch|Promise
     {
@@ -162,21 +162,21 @@ class ElasticClient
     /**
      * @return Elasticsearch
      * @template ['id','index','body']
+     * @return Elasticsearch|Promise|array|Collection
+     * @throws NoNodeAvailableException if all the hosts are offline
+     * @throws ClientResponseException if the status code of response is 4xx
+     * @throws ServerResponseException|QueryAdapterException if the status code of response is 5xx
      * @throws MissingParameterException if a required parameter is missing
-     *  @throws NoNodeAvailableException if all the hosts are offline
-     *  @throws ClientResponseException if the status code of response is 4xx
-     *  @throws ServerResponseException|QueryAdapterException if the status code of response is 5xx
-     *  @return Elasticsearch|Promise|array|Collection
      */
     public function indicesCreateDoc(array $body): Elasticsearch|Promise|array|Collection
     {
-        $this->checkRequiredParameters(['id','index','body'], $body);
+        $this->checkRequiredParameters(['id', 'index', 'body'], $body);
         return $this->client->create($body);
     }
 
 
     /**
-     * @param  array  $body
+     * @param array $body
      * @return Elasticsearch|Promise|array|Collection
      * @throws ClientResponseException
      * @throws MissingParameterException
@@ -199,7 +199,7 @@ class ElasticClient
     }
 
     /**
-     * @param  array  $body
+     * @param array $body
      * @return Elasticsearch|Promise
      * @throws ClientResponseException if the status code of response is 4xx
      * @throws MissingParameterException if a required parameter is missing
@@ -247,8 +247,8 @@ class ElasticClient
     }
 
     /**
-     * @param  string  $index
-     * @param  int|string  $id
+     * @param string $index
+     * @param int|string $id
      * @return Elasticsearch|Promise|array|Collection
      * @throws ClientResponseException
      * @throws MissingParameterException
@@ -368,12 +368,13 @@ class ElasticClient
     {
         //        Log::debug(json_encode($config, JSON_THROW_ON_ERROR));
         //        Psr18Client::class
-        $builder = (new ClientBuilder())
-            ->setHosts($config['hosts'])
+        $builder = new ClientBuilder();
+
+        $builder->setHosts($config['hosts']);
 //            ->setHttpClient(new $config['http_client']())
 //            ->setHttpClient(new Psr18Client())
-            ->setRetries($config['retries'] ?? 1)
-            ->setSSLVerification($config['ssl_verification'] ?? false);
+        $builder->setRetries($config['retries'] ?? 1);
+        $builder->setSSLVerification($config['ssl_verification'] ?? false);
 
         [$username, $password] = static::resolveBasicAuthData($config);
 
@@ -414,8 +415,8 @@ class ElasticClient
     }
 
     /**
-     * @param  array  $required
-     * @param  array  $params
+     * @param array $required
+     * @param array $params
      * @return void
      * @throws QueryAdapterException
      */
