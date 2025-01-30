@@ -164,7 +164,8 @@
         "sort-packages": true,
         "secure-http": false,
         "allow-plugins": {
-            "composer/package-versions-deprecated": true
+            "composer/package-versions-deprecated": true,
+            "php-http/discovery": false
         }
     },
     "minimum-stability": "stable",
