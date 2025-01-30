@@ -27,7 +27,7 @@ jobs:
           composer install --no-progress --no-scripts --prefer-dist
 
       - name: Run Tests
-        run: ./vendor/bin/phpunit --configuration phpunit.xml --error-format=github
+        run: ./vendor/bin/phpunit --configuration phpunit.xml
 
       - name: Cache Composer dependencies
         uses: actions/cache@v2
