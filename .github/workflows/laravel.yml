@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Tests
         run: vendor/bin/phpunit --configuration phpunit.xml
-        working-directory: .
+        working-directory: ./src
 
       - name: Cache Composer dependencies
         uses: actions/cache@v2
