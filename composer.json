@@ -40,7 +40,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/vahidaghazadeh/QueryAdapter",
+            "url": "https://github.com/vahidaghazadeh/QuaryAdapter.git",
             "options": {
                 "symlink": true,
                 "prefer-dist": true,
