@@ -23,10 +23,11 @@ jobs:
           extensions: mbstring, xml, intl, curl
 
       - name: Install Composer Dependencies
-        run: composer install --no-progress --no-scripts --prefer-dist
+        run: |
+          composer install --no-progress --no-scripts --prefer-dist
 
       - name: Run Tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --configuration phpunit.xml
 
       - name: Cache Composer dependencies
         uses: actions/cache@v2
