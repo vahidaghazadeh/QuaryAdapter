@@ -9,6 +9,8 @@ use Elastic\Elasticsearch\Response\Elasticsearch;
 use Http\Promise\Promise;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Modules\Core\Classes\ExceptionResponse;
 use Opsource\QueryAdapter\Contracts\AdapterIfc;
 use Opsource\QueryAdapter\Contracts\SearchableDirectiveInterface;
 use Opsource\QueryAdapter\Contracts\SearchIndex;
@@ -109,10 +111,12 @@ abstract class SearchEngine implements SearchIndex, AdapterIfc
      */
     public function createDoc(): Elasticsearch|Promise|string|array|Collection
     {
+        Log::debug("createDoc isPreventObserver");
         if ($this->isPreventObserver()) {
             if (!$this->resolveClient()->isExistsDocument(
                 ['id' => $this->model()->id, "index" => $this->getIndexName()]
             )) {
+                Log::debug("createDoc isExistsDocument");
                 $response = $this->resolveClient()->indicesCreateDoc([
                     $this->getIndicator() => $this->model()->id,
                     "index" => $this->indexName(),
@@ -121,6 +125,7 @@ abstract class SearchEngine implements SearchIndex, AdapterIfc
                 $this->setResponse($response);
                 return $response;
             } else {
+                Log::debug("createDoc Not isExistsDocument");
                 return "doc {$this->model()->id} exist in {$this->getIndexName()}";
             }
         }
@@ -137,23 +142,33 @@ abstract class SearchEngine implements SearchIndex, AdapterIfc
      */
     public function updateDoc(bool $use_doc = true): Elasticsearch|string|array|Collection
     {
-        if ($this->isPreventObserver()) {
-            if ($this->resolveClient()->isExistsDocument(
-                ['id' => $this->model()->id, "index" => $this->getIndexName()]
-            )) {
-                $response = $this->resolveClient()->indicesUpdateDoc([
-                    $this->getIndicator() => $this->model()->id,
-                    'index' => $this->getIndexName(),
-                    'body' => $use_doc ? ['doc' => $this->getEngineData()] : $this->getEngineData()
-                ]);
-                $this->setResponse($response);
-                return $response;
-            } else {
-                return $this->createDoc();
+        try {
+            Log::debug("updateDoc");
+            if ($this->isPreventObserver()) {
+                Log::debug("isPreventObserver");
+                if ($this->resolveClient()->isExistsDocument(
+                    ['id' => $this->model()->id, "index" => $this->getIndexName()]
+                )) {
+                    Log::debug("isExistsDocument");
+                    $response = $this->resolveClient()->indicesUpdateDoc([
+                        $this->getIndicator() => $this->model()->id,
+                        'index' => $this->getIndexName(),
+                        'body' => $use_doc ? ['doc' => $this->getEngineData()] : $this->getEngineData()
+                    ]);
+                    $this->setResponse($response);
+                    Log::debug(json_encode($response, JSON_UNESCAPED_UNICODE));
+                    return $response;
+                } else {
+                    Log::debug("createDoc");
+                    return $this->createDoc();
+                }
             }
+        }catch (\Exception|\Error|\Throwable $e) {
+            Log::debug(app(ExceptionResponse::class)->response($e));
         }
         return "Model update is disabled by preventObserver";
     }
+
 
     /**
      * @throws ServerResponseException

@@ -9,6 +9,7 @@ use Elastic\Elasticsearch\Response\Elasticsearch;
 use Exception;
 use Http\Promise\Promise;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Opsource\QueryAdapter\Aggregating\AggregationsQuery;
 use Opsource\QueryAdapter\Client\ElasticClient;
 use Opsource\QueryAdapter\Search\SearchQuery;

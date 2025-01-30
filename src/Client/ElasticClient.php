@@ -369,8 +369,8 @@ class ElasticClient
         //        Log::debug(json_encode($config, JSON_THROW_ON_ERROR));
         //        Psr18Client::class
         $builder = new ClientBuilder();
-
         $builder->setHosts($config['hosts']);
+        Log::debug(json_encode($config['hosts']));
 //            ->setHttpClient(new $config['http_client']())
 //            ->setHttpClient(new Psr18Client())
         $builder->setRetries($config['retries'] ?? 1);
@@ -405,7 +405,6 @@ class ElasticClient
 
         foreach ($config['hosts'] as $host) {
             $components = parse_url($host);
-
             if (filled($components['user'] ?? null)) {
                 return [$components['user'], $components['pass'] ?? ''];
             }

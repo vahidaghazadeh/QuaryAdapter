@@ -5,22 +5,26 @@ namespace Opsource\QueryAdapter\Support;
 class BuildPath
 {
     private $path;
+
     private $build;
+
     private $namespace;
+
     private $default;
 
     public function __construct($config)
     {
         if (is_array($config)) {
-            $this->path      = $config['path'];
-            $this->build  = $config['build'];
-            $this->default  = $config['default'];
+            $this->path = $config['path'];
+            $this->build = $config['build'];
+            $this->default = $config['default'];
             $this->namespace = $config['namespace'] ?? $this->convertPathToNamespace($config['path']);
+
             return;
         }
 
-        $this->path      = $config;
-        $this->build  = (bool) $config;
+        $this->path = $config;
+        $this->build = (bool) $config;
         $this->namespace = $config;
     }
 

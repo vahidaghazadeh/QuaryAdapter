@@ -49,6 +49,13 @@ trait DecoratesBoolQuery
         return $this;
     }
 
+    public function matchPhrasePrefix(string $field, string $value, string $analyzer = 'standard'): static
+    {
+        $this->forwardCallTo($this->boolQuery(), __FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
     public function nested(string $nested, Closure $filter): static
     {
         $this->forwardCallTo($this->boolQuery(), __FUNCTION__, func_get_args());

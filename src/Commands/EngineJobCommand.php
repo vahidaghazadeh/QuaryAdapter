@@ -77,7 +77,7 @@ class EngineJobCommand extends GeneratorCommand implements QueryAdapterCommandBu
     {
         if ($this->argument('model')) {
             if ($this->argument('module')) {
-                return "use {$this->laravel['modules']->config('namespace')}\\{$this->getModuleName()}\\Entities\\{$this->getModelName()};";
+                return "use {$this->laravel['modules']->config('namespace')}\\{$this->getModuleName()}\\Models\\{$this->getModelName()};";
             } else {
                 return "use App\\Models\\{$this->getModelName()};";
             }

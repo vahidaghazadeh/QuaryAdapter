@@ -41,6 +41,12 @@ class template
         ]);
     }
 
+    public function matchPhrasePrefix()
+    {
+        $query = $this->getDdapter()->query();
+        $query->matchPhrasePrefix('en_name', "query");
+    }
+
     public function analyzer()
     {
         $text = "text";

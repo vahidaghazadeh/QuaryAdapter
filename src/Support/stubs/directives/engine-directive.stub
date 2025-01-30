@@ -92,6 +92,11 @@ class {DIRECTIVE_NAME} implements SearchableDirectiveInterface
         return $this;
     }
 
+    public function runWithOutDispatcher(Closure $closure): Model|bool
+    {
+         return $this->getModel()->withoutEvents($closure);
+    }
+
     public function adapter(): EngineDirectiveAdapter
     {
         return app(EngineDirectiveAdapter::class, ['directive' => $this]);

@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputOption;
 class EngineModelDirectorCommand extends GeneratorCommand implements QueryAdapterCommandBuilderIfc
 {
     protected $argumentName = 'directive';
+
     //    protected $signature = 'engine:make {name} {model} --{module} --{force=}';
     protected $signature = 'engine:make-directive {model} {module} {index} {--indicator} {--facade} {--job} {--broker}';
 
@@ -22,6 +23,7 @@ class EngineModelDirectorCommand extends GeneratorCommand implements QueryAdapte
     {
         $path = Module::getModulePath($this->getModuleName());
         $directivePath = BuilderConfigReader::read('directive');
+
         return "$path{$directivePath->getPath()}/{$this->getFileName()}.php";
     }
 
@@ -38,7 +40,7 @@ class EngineModelDirectorCommand extends GeneratorCommand implements QueryAdapte
         if ($this->option('facade')) {
             $this->call('engine:make-facade', [
                 'model' => $this->getModelName(),
-                'module' => $this->getModuleName()
+                'module' => $this->getModuleName(),
             ]);
         }
 
@@ -46,21 +48,20 @@ class EngineModelDirectorCommand extends GeneratorCommand implements QueryAdapte
             $params = [
                 'model' => $this->getModelName(),
                 'module' => $this->getModuleName(),
-                'name' => $this->argument('model')
+                'name' => $this->argument('model'),
             ];
-            if($this->option('broker')) {
+            if ($this->option('broker')) {
                 $params['--broker'] = $this->option('broker');
             }
             $this->call('engine:make-job', $params);
         }
 
-
         return (new StubBuilder($this->getStubName(), [
             'namespace' => "{$this->laravel['modules']->config('namespace')}\\{$this->getModuleName()}\\$directivesPath",
-            'model_namespace' => "{$this->laravel['modules']->config('namespace')}\\{$this->getModuleName()}\\Entities\\{$this->getModelName()}",
+            'model_namespace' => "{$this->laravel['modules']->config('namespace')}\\{$this->getModuleName()}\\Models\\{$this->getModelName()}",
             'directive_name' => $this->getFileName(),
             'model_name' => $this->getModelName(),
-//            "model_instance" => lcfirst($this->getModelName()),
+            //            "model_instance" => lcfirst($this->getModelName()),
             'index' => $this->getIndex(),
             'indicator' => $this->getIndicator(),
         ]))->render();
@@ -68,8 +69,6 @@ class EngineModelDirectorCommand extends GeneratorCommand implements QueryAdapte
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
     protected function getArguments(): array
     {
@@ -80,9 +79,6 @@ class EngineModelDirectorCommand extends GeneratorCommand implements QueryAdapte
         ];
     }
 
-    /**
-     * @return array
-     */
     protected function getOptions(): array
     {
         return [
@@ -115,12 +111,10 @@ class EngineModelDirectorCommand extends GeneratorCommand implements QueryAdapte
     public function getDefaultNamespace(): string
     {
         $engine = $this->laravel['query_builder'];
+
         return $engine->config('query_adapter.builder.directive.namespace') ?: $engine->config('query_adapter.builder.directive.path', 'Engine/Directives');
     }
 
-    /**
-     * @return string
-     */
     public function getFileName(): string
     {
         return Str::studly($this->argument('model').config('query_adapter.paths.directive_prefix'));

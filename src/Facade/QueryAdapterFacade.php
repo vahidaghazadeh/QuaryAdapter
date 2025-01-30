@@ -48,6 +48,7 @@ use Opsource\QueryAdapter\Performers\WildcardOptions;
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder isEmpty(): bool
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder like(array $field, mixed $value, string $operator = 'or')
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder moreLike(array $field, mixed $value, array $more)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder matchPhrasePrefix(string $field, string $value, string $analyzer = 'standard')
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder nested(string $nested, Closure $filter)
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder where(string $field, mixed $operator, mixed $value = null)
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder find($id)

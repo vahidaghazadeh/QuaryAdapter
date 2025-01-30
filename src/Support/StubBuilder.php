@@ -6,9 +6,7 @@ class StubBuilder
 {
     protected static ?string $basePath = null;
 
-    public function __construct(protected string $path, protected array $replaces)
-    {
-    }
+    public function __construct(protected string $path, protected array $replaces) {}
 
     public static function create(string $path, array $replaces = []): static
     {
@@ -18,19 +16,17 @@ class StubBuilder
     public function setPath(string $path): static
     {
         $this->path = $path;
+
         return $this;
     }
 
     public function getPath(): string
     {
         $path = static::getBasePath().$this->path;
-        return file_exists($path) ? $path : __DIR__.'/stubs'. $this->path;
+
+        return file_exists($path) ? $path : __DIR__.'/stubs'.$this->path;
     }
 
-    /**
-     * @param $path
-     * @return void
-     */
     public static function setBasePath($path): void
     {
         static::$basePath = $path;
@@ -44,13 +40,12 @@ class StubBuilder
     public function setReplaces(array $replaces): static
     {
         $this->replaces = $replaces;
+
         return $this;
     }
 
     /**
      * Get base path.
-     *
-     * @return string|null
      */
     public static function getBasePath(): ?string
     {
@@ -59,15 +54,13 @@ class StubBuilder
 
     /**
      * Get stub contents.
-     *
-     * @return string|array|false
      */
     public function getContents(): string|array|false
     {
         $contents = file_get_contents($this->getPath());
 
         foreach ($this->getReplaces() as $search => $replace) {
-            $contents = str_replace('{' . strtoupper($search) . '}', $replace, $contents);
+            $contents = str_replace('{'.strtoupper($search).'}', $replace, $contents);
         }
 
         return $contents;
@@ -75,8 +68,6 @@ class StubBuilder
 
     /**
      * Get stub contents.
-     *
-     * @return false|array|string
      */
     public function render(): false|array|string
     {
@@ -85,21 +76,15 @@ class StubBuilder
 
     /**
      * Save stub to specific path.
-     *
-     * @param  string  $path
-     * @param  string  $filename
-     *
-     * @return bool
      */
     public function saveTo(string $path, string $filename): bool
     {
-        return file_put_contents($path . '/' . $filename, $this->getContents());
+        return file_put_contents($path.'/'.$filename, $this->getContents());
     }
 
     /**
      * Set replacements array.
      *
-     * @param array $replaces
      *
      * @return $this
      */
@@ -119,5 +104,4 @@ class StubBuilder
     {
         return $this->render();
     }
-
 }

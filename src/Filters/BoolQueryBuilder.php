@@ -2,6 +2,7 @@
 
 namespace Opsource\QueryAdapter\Filters;
 
+use App\Packages\Opsource\QueryAdapter\src\Filters\Indicators\MatchPhrasePrefix;
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Opsource\QueryAdapter\Contracts\BoolQuery;
@@ -101,13 +102,6 @@ class BoolQueryBuilder implements BoolQuery, IndicatorIfc
         $criteria = $this->createComparisonCriteria(field: $field, operator: $operator, value: $value);
         $this->filter->add($criteria);
 
-        return $this;
-    }
-
-    public function moreLike(array $field, mixed $value, array $more): static
-    {
-        $criteria = $this->createComparisonCriteria(field: $field, operator: 'more_like', value: $value, more: $more);
-        $this->filter->add($criteria);
         return $this;
     }
 
@@ -291,12 +285,28 @@ class BoolQueryBuilder implements BoolQuery, IndicatorIfc
         return $this;
     }
 
+    public function matchPhrasePrefix(string $field, string $value, string $analyzer = 'standard'): static
+    {
+        $criteria = $this->createComparisonCriteria(field: $field, operator:"match_phrase_prefix", value: $value, more: ['analyzer' => $analyzer]);
+        $this->filter->add($criteria);
+
+        return $this;
+    }
+
+    public function moreLike(array $field, mixed $value, array $more): static
+    {
+        $criteria = $this->createComparisonCriteria(field: $field, operator: 'more_like', value: $value, more: $more);
+        $this->filter->add($criteria);
+        return $this;
+    }
+
     protected function createComparisonCriteria(string|array $field, string $operator, mixed $value, array $more = null): IndicatorIfc
     {
         return match ($operator) {
             '=', '!=' => new Term($field, $value),
             'and', 'or' => new QueryString($field, $operator, $value),
             'more_like' => new MoreLike($field, $operator, $value, $more),
+            'match_phrase_prefix' => new MatchPhrasePrefix($field, $value, $more['analyzer']),
             default => new RangeBound($field, $operator, $value)
         };
     }
