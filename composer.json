@@ -39,8 +39,8 @@
     },
     "repositories": [
         {
-            "type": "composer",
-            "url": "https://github.com/vahidaghazadeh/QuaryAdapter",
+            "type": "vcs",
+            "url": "https://github.com/vahidaghazadeh/QueryAdapter",
             "options": {
                 "symlink": true,
                 "prefer-dist": true,
@@ -162,6 +162,7 @@
     },
     "config": {
         "sort-packages": true,
+        "secure-http": false,
         "allow-plugins": {
             "composer/package-versions-deprecated": true
         }
