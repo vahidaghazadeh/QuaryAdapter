@@ -28,11 +28,10 @@ jobs:
 
       - name: Run Tests
         run: vendor/bin/phpunit --configuration phpunit.xml
+        working-directory: .
 
       - name: Cache Composer dependencies
         uses: actions/cache@v2
         with:
           path: ~/.composer/cache
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+          key: ${{ runner.os }}-com
