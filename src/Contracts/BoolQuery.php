@@ -11,6 +11,7 @@ use Opsource\QueryAdapter\Performers\WildcardOptions;
 interface BoolQuery
 {
     public function where(string $field, mixed $operator, mixed $value = null): static;
+    public function orWhere(string $field, mixed $operator, mixed $value = null): static;
     public function like(array $field, mixed $value, string $operator = 'OR'): static ;
     public function moreLike(array $field, mixed $value, array $more): static;
     public function matchPhrasePrefix(string $field, string $value, string $analyzer = 'standard'): static;

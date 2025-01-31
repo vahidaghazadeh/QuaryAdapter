@@ -6,6 +6,7 @@ interface QueryBuilderIfc
 {
     public function find(mixed $value): static;
     public function where($column, $operator = null, $value = null, $or = false, $boost = false);
+    public function orWhere($column, $operator = null, $value = null, $or = false, $boost = false);
 
     public function whereNull($column);
 
@@ -28,8 +29,6 @@ interface QueryBuilderIfc
     public function orWhereHas($column, $closure, $boost = false);
 
     public function createNestedQuery($column, $builder, $path);
-
-    public function orWhere($column, $operator = null, $value = null, $boost = false);
 
     public function rawSearch($body);
 

@@ -280,14 +280,6 @@ Separate releases are created for Elasticsearch 7 and 8. Development for each ve
 
 See [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
-### Testing
-
-1. `composer install`
-2. `npm i`
-3. Start Elasticsearch
-4. Copy `phpunit.xml.dist` to `phpunit.xml` and set correct environment variables
-5. `composer test`
-
 ## License
 
 MIT License. See [LICENSE.md](LICENSE.md) for more information.

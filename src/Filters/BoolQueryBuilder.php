@@ -130,6 +130,21 @@ class BoolQueryBuilder implements BoolQuery, IndicatorIfc
         return $this;
     }
 
+    public function orWhere(string $field, mixed $operator, mixed $value = null): static
+    {
+        if ($operator === '!=') {
+            return $this->whereNot($field, $value);
+        }
+
+        if (func_num_args() === 2) {
+            [$operator, $value] = ['=', $operator];
+        }
+        $criteria = $this->createComparisonCriteria($this->absolutePath($field), $operator, $value);
+        $this->should->add($criteria);
+
+        return $this;
+    }
+
     /**
      * @return $this
      */
