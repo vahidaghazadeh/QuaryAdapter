@@ -24,7 +24,14 @@ trait DecoratesBoolQuery
         return $this;
     }
 
-    public function orWhere(string $field, mixed $operator, mixed $value = null): static
+    public function whereShould(string $field, mixed $operator, mixed $value = null): static
+    {
+        $this->forwardCallTo($this->boolQuery(), __FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
+    public function orWhereShould(string $field, mixed $operator, mixed $value = null): static
     {
         $this->forwardCallTo($this->boolQuery(), __FUNCTION__, func_get_args());
 

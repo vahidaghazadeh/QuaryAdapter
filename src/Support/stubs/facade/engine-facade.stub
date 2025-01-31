@@ -50,7 +50,7 @@ use Opsource\QueryAdapter\Performers\WildcardOptions;
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder moreLike(array $field, mixed $value, array $more)
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder nested(string $nested, Closure $filter)
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder where(string $field, mixed $operator, mixed $value = null)
- * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder orWhere(string $field, mixed $operator, mixed $value = null)
+ * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereShould(string $field, mixed $operator, mixed $value = null)
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder find($id)
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereNot(string $field, mixed $value)
  * @method \Opsource\QueryAdapter\Filters\BoolQueryBuilder whereTerm(string $field, mixed $value)

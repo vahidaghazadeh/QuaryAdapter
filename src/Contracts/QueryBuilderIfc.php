@@ -6,7 +6,8 @@ interface QueryBuilderIfc
 {
     public function find(mixed $value): static;
     public function where($column, $operator = null, $value = null, $or = false, $boost = false);
-    public function orWhere($column, $operator = null, $value = null, $or = false, $boost = false);
+    public function whereShould(string $field, mixed $operator, mixed $value = null): static;
+    public function orWhereShould(string $field, mixed $operator, mixed $value = null): static;
 
     public function whereNull($column);
 
