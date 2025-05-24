@@ -124,4 +124,34 @@ class template
             ->setEngineData()
             ->runWithJob(false);
     }
+
+    public function selectChildAllValues()
+    {
+        $query = [
+            "query" => [
+                "bool" => [
+                    "must" => [
+                        [
+                            "parent_id" => [
+                                "type" => "relation name",
+                                "id" => "routing id"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $model = Model::class;
+        return $model->searchEngine()->adapter()->query()
+            ->withRouting("routing id", 'relation name')->get(as_dsl: true);
+
+    }
+    public function selectChildWithFilterValues()
+    {
+        $model = Model::class;
+        return $model->searchEngine()->adapter()->query()
+            ->withRouting('attribute_id', [1, 7, 13, 19], '269')
+            ->get(as_dsl: true);
+
+    }
 }

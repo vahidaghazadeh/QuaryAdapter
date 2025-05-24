@@ -2,7 +2,10 @@
 
 namespace Opsource\QueryAdapter\Filters;
 
+use App\Packages\Opsource\QueryAdapter\src\Filters\Indicators\HasChild;
+use App\Packages\Opsource\QueryAdapter\src\Filters\Indicators\MatchAll;
 use App\Packages\Opsource\QueryAdapter\src\Filters\Indicators\MatchPhrasePrefix;
+use App\Packages\Opsource\QueryAdapter\src\Filters\Indicators\WithRouting;
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Opsource\QueryAdapter\Contracts\BoolQuery;
@@ -264,14 +267,15 @@ class BoolQueryBuilder implements BoolQuery, IndicatorIfc
     }
 
     protected function makeMultiMatch(
-        array $fields,
-        string $query,
+        array                         $fields,
+        string                        $query,
         string|MultiMatchOptions|null $type = null
-    ): MultiMatch {
+    ): MultiMatch
+    {
         $options = is_string($type) ? MultiMatchOptions::make($type) : $type;
 
         $fields = array_map(
-            fn (string $field) => $this->absolutePath($field),
+            fn(string $field) => $this->absolutePath($field),
             $fields
         );
 
@@ -309,7 +313,7 @@ class BoolQueryBuilder implements BoolQuery, IndicatorIfc
         $path = $this->absolutePath($nested);
         $boolQuery = static::make($path, $filter);
 
-        if (! $boolQuery->isEmpty()) {
+        if (!$boolQuery->isEmpty()) {
             $target->add(new Nested($path, $boolQuery));
         }
 
@@ -318,7 +322,7 @@ class BoolQueryBuilder implements BoolQuery, IndicatorIfc
 
     public function matchPhrasePrefix(string $field, string $value, string $analyzer = 'standard'): static
     {
-        $criteria = $this->createComparisonCriteria(field: $field, operator:"match_phrase_prefix", value: $value, more: ['analyzer' => $analyzer]);
+        $criteria = $this->createComparisonCriteria(field: $field, operator: "match_phrase_prefix", value: $value, more: ['analyzer' => $analyzer]);
         $this->filter->add($criteria);
 
         return $this;
@@ -331,6 +335,64 @@ class BoolQueryBuilder implements BoolQuery, IndicatorIfc
         return $this;
     }
 
+    public function hasChild(string $type, Closure $filter): static
+    {
+        // Create a new BoolQueryBuilder instance for the child query
+        $childQuery = static::make('', $filter);
+
+        // Add the HasChild indicator to the "must" collection
+        $this->must->add(new HasChild($type, $childQuery));
+
+        return $this;
+    }
+
+    public function orHasChild(string $type, Closure $filter): static
+    {
+        // Create a new BoolQueryBuilder instance for the child query
+        $childQuery = static::make('', $filter);
+
+        // Add the HasChild indicator to the "should" collection
+        $this->should->add(new HasChild($type, $childQuery));
+
+        return $this;
+    }
+
+    public function whereMatchAll(): static
+    {
+        $this->must->add(new MatchAll());
+
+        return $this;
+    }
+
+    public function withRouting(string $routingId, string $field = null, array $values = null): static
+    {
+        if (is_null($field) && is_null($values)) {
+            $fieldCriteria = $this->createComparisonCriteria("", "with_routing", [], [
+                    'key' => "_routing",
+                    "routing_id" => $routingId]
+            );
+            $this->must->add($fieldCriteria);
+        } elseif (!is_null($field) && is_null($values)) {
+            $fieldCriteria = $this->createComparisonCriteria($field, "with_routing", [], [
+                'key' => "child",
+                'routing_id' => $routingId
+            ]);
+            $this->must->add($fieldCriteria);
+        } else {
+            $fieldCriteria = $this->createComparisonCriteria($field, "with_routing", $values, [
+                'key' => "field"
+            ]);
+            $this->must->add($fieldCriteria);
+            $roteCriteria = $this->createComparisonCriteria($field, "with_routing", $values, [
+                "key" => "_routing",
+                "routing_id" => $routingId
+            ]);
+            $this->must->add($roteCriteria);
+        }
+
+        return $this;
+    }
+
     protected function createComparisonCriteria(string|array $field, string $operator, mixed $value, array $more = null): IndicatorIfc
     {
         return match ($operator) {
@@ -338,6 +400,8 @@ class BoolQueryBuilder implements BoolQuery, IndicatorIfc
             'and', 'or' => new QueryString($field, $operator, $value),
             'more_like' => new MoreLike($field, $operator, $value, $more),
             'match_phrase_prefix' => new MatchPhrasePrefix($field, $value, $more['analyzer']),
+            'has_child' => new HasChild($field, $value),
+            'with_routing' => new WithRouting($more, $field, $value),
             default => new RangeBound($field, $operator, $value)
         };
     }

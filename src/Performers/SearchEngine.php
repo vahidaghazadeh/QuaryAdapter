@@ -135,28 +135,21 @@ abstract class SearchEngine implements SearchIndex, AdapterIfc
     /**
      * @param bool $use_doc
      * @return Elasticsearch|string|array|Collection
-     * @throws ClientResponseException
-     * @throws MissingParameterException
-     * @throws QueryAdapterException
-     * @throws ServerResponseException
+     *
      */
     public function updateDoc(bool $use_doc = true): Elasticsearch|string|array|Collection
     {
         try {
-            Log::debug("updateDoc");
             if ($this->isPreventObserver()) {
-                Log::debug("isPreventObserver");
                 if ($this->resolveClient()->isExistsDocument(
                     ['id' => $this->model()->id, "index" => $this->getIndexName()]
                 )) {
-                    Log::debug("isExistsDocument");
                     $response = $this->resolveClient()->indicesUpdateDoc([
                         $this->getIndicator() => $this->model()->id,
                         'index' => $this->getIndexName(),
                         'body' => $use_doc ? ['doc' => $this->getEngineData()] : $this->getEngineData()
                     ]);
                     $this->setResponse($response);
-                    Log::debug(json_encode($response, JSON_UNESCAPED_UNICODE));
                     return $response;
                 } else {
                     Log::debug("createDoc");
@@ -164,7 +157,7 @@ abstract class SearchEngine implements SearchIndex, AdapterIfc
                 }
             }
         }catch (\Exception|\Error|\Throwable $e) {
-            Log::debug(app(ExceptionResponse::class)->response($e));
+            return ExceptionResponse::getInstance()->response($e);
         }
         return "Model update is disabled by preventObserver";
     }
@@ -186,6 +179,38 @@ abstract class SearchEngine implements SearchIndex, AdapterIfc
         }
         return "Model delete is disabled by preventObserver";
     }
+
+    /**
+     * @throws ServerResponseException
+     * @throws ClientResponseException
+     * @throws MissingParameterException
+     */
+    public function deleteChildDoc(int|string $parentId, int|string $childId): array|string
+    {
+//        $body = $this->query()->where('_id', $childId)->where("_routing", $parentId)->get(as_dsl: true);
+        $body = [
+            'query' => [
+                'bool' => [
+                    'must' => [
+                        ['term' => ['_id' => $childId]],
+                        ['term' => ['_routing' => $parentId]],
+                    ],
+                ],
+            ],
+        ];
+
+        if ($this->isPreventObserver()) {
+            $query = $this->query()->where('_id', $childId)->where("_routing", $parentId);
+            if ($query->get()->count()) {
+//                return $this->resolveClient()->deleteByQuery($this->getIndexName(), $body);
+                return $this->resolveClient()->deleteByQuery($this->getIndexName(), ["query" => $query->get(as_dsl: true)->get('query')]);
+            }
+            return new Collection();
+        }
+
+        return "Model delete is disabled by preventObserver";
+    }
+
 
     /**
      * @throws ClientResponseException
@@ -238,10 +263,11 @@ abstract class SearchEngine implements SearchIndex, AdapterIfc
      * @throws ClientResponseException
      * @throws ServerResponseException
      * @throws MissingParameterException
+     * @throws QueryAdapterException
      */
     public function addToIndex(array $body): Elasticsearch
     {
-        return $this->resolveClient()->indicesIndex($body);
+        return $this->resolveClient()->indicesCreateDoc($body);
     }
 
     /**

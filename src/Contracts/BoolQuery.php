@@ -15,6 +15,10 @@ interface BoolQuery
     public function orWhereShould(string $field, mixed $operator, mixed $value = null): static;
     public function like(array $field, mixed $value, string $operator = 'OR'): static ;
     public function moreLike(array $field, mixed $value, array $more): static;
+    public function hasChild(string $type, Closure $filter): static;
+    public function orHasChild(string $type, Closure $filter): static;
+    public function whereMatchAll(): static;
+    public function withRouting(string $routingId, string $field = null, array $values = null): static;
     public function matchPhrasePrefix(string $field, string $value, string $analyzer = 'standard'): static;
     public function find(mixed $value): static;
     public function nested(string $nested, Closure $filter): static;

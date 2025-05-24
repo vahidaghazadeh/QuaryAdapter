@@ -63,6 +63,30 @@ trait DecoratesBoolQuery
         return $this;
     }
 
+    public function hasChild(string $type, Closure $filter): static
+    {
+        $this->forwardCallTo($this->boolQuery(), __FUNCTION__, func_get_args());
+        return $this;
+    }
+
+    public function orHasChild(string $type, Closure $filter): static
+    {
+        $this->forwardCallTo($this->boolQuery(), __FUNCTION__, func_get_args());
+        return $this;
+    }
+
+    public function whereMatchAll(): static
+    {
+        $this->forwardCallTo($this->boolQuery(), __FUNCTION__, func_get_args());
+        return $this;
+    }
+
+    public function withRouting(string $routingId, string $field = null, array $values = null): static
+    {
+        $this->forwardCallTo($this->boolQuery(), __FUNCTION__, func_get_args());
+        return $this;
+    }
+
     public function matchPhrasePrefix(string $field, string $value, string $analyzer = 'standard'): static
     {
         $this->forwardCallTo($this->boolQuery(), __FUNCTION__, func_get_args());
